@@ -15,9 +15,11 @@ A simple gym tracker for your phone. Build workout programs, log the weight and 
 - **Templates.** Start a new program from Upper / Lower (4 days), Push / Pull / Legs (3 days), Full body (2 days) or an empty program, then change anything you like.
 - **Exercise library.** Every exercise has a short how-to, the equipment it needs and a front/back muscle map showing the main and secondary muscles worked. Search by name or muscle and filter by equipment.
 - **Workout logging.** Enter weight and reps set by set. The fields are pre-filled with what you did last time, so repeating a set is one tap on ✓.
+- **Rest timer.** Marking a set done starts a rest countdown at the bottom of the screen, with a beep and vibration when it's over (where the phone allows it). Use −15s / +15s to adjust it; the app remembers your rest length.
 - **Progression hints.** When every set reached the top of the rep range last time, the app suggests adding weight (+2.5 kg, or +1 kg on light lifts). This is the classic double-progression method.
 - **Progress per exercise.** Pick a window of 2, 4, 8 or 12 weeks. If your working weight stayed the same, you see the change in reps ("+4 reps at the same weight, 60 kg"); if it went up, you see the change in kg. Each exercise has a chart of estimated 1RM, top weight, reps or volume, plus a table of past workouts.
 - **History.** Every saved workout, newest first. Delete a workout with the bin button next to it; its sets are removed from your progress too.
+- **Backup.** Export all programs and workouts to a JSON file from the History tab, and import it again on the same or another device. Importing only adds what's missing, so it never deletes anything.
 - **Dark theme** in charcoal grey with a red-orange accent.
 - **Works offline** and installs on the home screen like a regular app.
 - **Example data.** "Try with example data" fills in six weeks of workouts so you can see how everything works, and "Remove examples" clears it again.
@@ -36,7 +38,7 @@ On Android, open the address in Chrome and choose **Install app** from the menu.
 
 ## Where your data is stored
 
-Everything is stored in the browser's local storage on the device you use. Nothing is sent to a server, so workouts logged on your phone stay on your phone. If you delete the app from the home screen or clear Safari's website data, the workouts are deleted too.
+Everything is stored in the browser's local storage on the device you use. Nothing is sent to a server, so workouts logged on your phone stay on your phone. If you delete the app from the home screen or clear Safari's website data, the workouts are deleted too. Use **History → Backup → Export backup** now and then, and save the file somewhere safe such as iCloud Drive.
 
 ## Hosting
 
