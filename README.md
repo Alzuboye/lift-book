@@ -11,12 +11,14 @@ A simple gym tracker for your phone. Build workout programs, log the weight and 
 
 ## Features
 
-- **Programs.** Pick exercises from a library of 144 movements (or add your own) and set the number of sets and a rep range for each, for example 3 × 8–12.
+- **Programs with several workouts.** A program holds one or more workout days, such as an upper/lower split with two upper-body and two lower-body days. Each day lists its exercises with a number of sets and a rep range, for example 3 × 8–12. The Train screen marks which workout is next in the rotation.
+- **Templates.** Start a new program from Upper / Lower (4 days), Push / Pull / Legs (3 days), Full body (2 days) or an empty program, then change anything you like.
 - **Exercise library.** Every exercise has a short how-to, the equipment it needs and a front/back muscle map showing the main and secondary muscles worked. Search by name or muscle and filter by equipment.
 - **Workout logging.** Enter weight and reps set by set. The fields are pre-filled with what you did last time, so repeating a set is one tap on ✓.
 - **Progression hints.** When every set reached the top of the rep range last time, the app suggests adding weight (+2.5 kg, or +1 kg on light lifts). This is the classic double-progression method.
 - **Progress per exercise.** Pick a window of 2, 4, 8 or 12 weeks. If your working weight stayed the same, you see the change in reps ("+4 reps at the same weight, 60 kg"); if it went up, you see the change in kg. Each exercise has a chart of estimated 1RM, top weight, reps or volume, plus a table of past workouts.
-- **History.** Every saved workout, newest first.
+- **History.** Every saved workout, newest first. Delete a workout with the bin button next to it; its sets are removed from your progress too.
+- **Dark theme** in charcoal grey with a red-orange accent.
 - **Works offline** and installs on the home screen like a regular app.
 - **Example data.** "Try with example data" fills in six weeks of workouts so you can see how everything works, and "Remove examples" clears it again.
 
@@ -44,7 +46,7 @@ The app is plain static files (`index.html`, `sw.js`, `manifest.webmanifest`, `i
 
 1. In the repository go to **Settings → Pages**.
 2. Under **Build and deployment**, choose **Deploy from a branch**, select `main` and `/ (root)`, and save.
-3. After a minute the app is live at `https://<your-username>.github.io/gym-tracker/`.
+3. After a minute the app is live at `https://<your-username>.github.io/liftbook/`.
 
 GitHub Pages for a private repository needs a paid GitHub plan. On a free account, either make the repository public or use a free host such as Netlify or Cloudflare Pages and point it at this repository (no build command, publish directory `/`).
 
@@ -74,9 +76,10 @@ docs/                   Screenshots used in this README
 Inside `index.html` the script is split into sections:
 
 - **Exercise library** (`LIB_SRC`): one line per exercise in the form `key|name|group|equipment|primary muscles|secondary muscles|description`. Add a line to add an exercise.
+- **Program templates** (`TEMPLATES`): each workout day is a list of `exercise-key:sets:min reps:max reps`.
 - **Muscle map** (`BODY`, `bodySvg`): the front and back figure drawn as SVG shapes, one group per muscle.
 - **Storage**: saves to `localStorage`. When the page runs inside a Claude artifact it uses the artifact's database instead, so the same file also works as the Claude-hosted version.
 - **Analytics** (`exHistory`, `compare`, `headline`, `suggestion`): turns logged sets into the progress numbers and weight suggestions.
-- **Views** (`vTrain`, `vWorkout`, `vPrograms`, `vProgress`, `vExercise`, `vHistory`): each returns the HTML for one screen.
+- **Views** (`vTrain`, `vWorkout`, `vPrograms`, `vNewProgram`, `vEditProgram`, `vEditDay`, `vProgress`, `vExercise`, `vHistory`): each returns the HTML for one screen.
 
-When you change `index.html`, bump `CACHE` in `sw.js` (for example `liftbook-v2`) so installed copies pick up the new version.
+When you change `index.html`, bump `CACHE` in `sw.js` (for example `liftbook-v3`) so installed copies pick up the new version.
