@@ -46,7 +46,7 @@ The app is plain static files (`index.html`, `sw.js`, `manifest.webmanifest`, `i
 
 1. In the repository go to **Settings → Pages**.
 2. Under **Build and deployment**, choose **Deploy from a branch**, select `main` and `/ (root)`, and save.
-3. After a minute the app is live at `https://<your-username>.github.io/liftbook/`.
+3. After a minute the app is live at `https://<your-username>.github.io/lift-book/`.
 
 GitHub Pages for a private repository needs a paid GitHub plan. On a free account, either make the repository public or use a free host such as Netlify or Cloudflare Pages and point it at this repository (no build command, publish directory `/`).
 
