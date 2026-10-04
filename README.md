@@ -82,4 +82,4 @@ Inside `index.html` the script is split into sections:
 - **Analytics** (`exHistory`, `compare`, `headline`, `suggestion`): turns logged sets into the progress numbers and weight suggestions.
 - **Views** (`vTrain`, `vWorkout`, `vPrograms`, `vNewProgram`, `vEditProgram`, `vEditDay`, `vProgress`, `vExercise`, `vHistory`): each returns the HTML for one screen.
 
-When you change `index.html`, bump `CACHE` in `sw.js` (for example `liftbook-v3`) so installed copies pick up the new version.
+When you change `index.html`, bump `CACHE` in `sw.js` (for example `liftbook-v4`) so installed copies pick up the new version.
