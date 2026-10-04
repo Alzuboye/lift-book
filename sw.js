@@ -1,17 +1,17 @@
 // Offline support: the app shell is precached; pages are fetched network-first
 // so updates arrive when online, and everything else is served from cache first.
-const CACHE = "liftbook-v3";
+const CACHE = "liftbook-v4";
 const SHELL = [
   "./",
   "index.html",
-  "manifest.webmanifest",
-  "icons/icon-180.png",
-  "icons/icon-192.png",
-  "icons/icon-512.png",
+  "manifest.webmanifest?v=4",
+  "icons/icon-180.png?v=4",
+  "icons/icon-192.png?v=4",
+  "icons/icon-512.png?v=4",
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  event.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL.map((u) => new Request(u, { cache: "reload" })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (event) => {
@@ -28,7 +28,7 @@ self.addEventListener("fetch", (event) => {
 
   if (req.mode === "navigate") {
     event.respondWith(
-      fetch(req)
+      fetch(req, { cache: "no-cache" })
         .then((res) => {
           const copy = res.clone();
           caches.open(CACHE).then((c) => c.put("index.html", copy));
