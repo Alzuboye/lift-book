@@ -4,16 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Log your gym workouts and see how each lift progresses week by week.">
-<meta name="theme-color" content="#ECEEF1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0E1115" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#121315">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Liftbook">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Liftbook</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,26 +20,16 @@
 <style>
 /* Layout: phone-first single column (max 560px), sticky top bar, fixed bottom tab bar; workout log reads like a lifting card: set # | kg | reps | check */
 :root{
-  --bg:#ECEEF1; --surface:#FFFFFF; --sunk:#F5F6F8; --ink:#14181E; --muted:#5A636F; --line:#D4D9E0;
-  --accent:#1D55D0; --accent-soft:#E2EAFB; --accent-ink:#FFFFFF;
-  --good:#17744A; --good-soft:#E1F2E9; --bad:#B23628; --bad-soft:#F8E4E1; --warn:#8A5A00; --warn-soft:#FBF0D6;
-  --muscle:#D3D8E0; --skin:#E4E7EC;
+  /* Single dark theme: charcoal greys with an ember red-orange accent */
+  --bg:#121315; --surface:#1C1D21; --sunk:#25272C; --ink:#EEEDEB; --muted:#9C9A97; --line:#2F3137;
+  --accent:#FF5A2E; --accent-soft:#3A1E16; --accent-ink:#170A06;
+  --good:#5CC98F; --good-soft:#163025; --bad:#FF7A8A; --bad-soft:#3B1C22; --warn:#F2B04A; --warn-soft:#352816;
+  --muscle:#34363C; --skin:#2A2C31;
   --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
   --body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --r:10px;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0E1115; --surface:#171B21; --sunk:#1E232A; --ink:#E8ECF1; --muted:#98A2AE; --line:#2B323B;
-  --accent:#6B95FF; --accent-soft:#1D2A47; --accent-ink:#0B1020;
-  --good:#53C58B; --good-soft:#15301F; --bad:#F2806F; --bad-soft:#3A1E1A; --warn:#E8B44E; --warn-soft:#352914;
-  --muscle:#323A45; --skin:#262C34;
-  color-scheme:dark }}
-:root[data-theme="dark"]{
-  --bg:#0E1115; --surface:#171B21; --sunk:#1E232A; --ink:#E8ECF1; --muted:#98A2AE; --line:#2B323B;
-  --accent:#6B95FF; --accent-soft:#1D2A47; --accent-ink:#0B1020;
-  --good:#53C58B; --good-soft:#15301F; --bad:#F2806F; --bad-soft:#3A1E1A; --warn:#E8B44E; --warn-soft:#352914;
-  --muscle:#323A45; --skin:#262C34;
-  color-scheme:dark }
 *{box-sizing:border-box}
 html,body{background:var(--bg);color:var(--ink)}
 body{font-family:var(--body);font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
@@ -229,6 +218,7 @@ const I = {
   train:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12h20M5 8v8M8 6v12M16 6v12M19 8v8"/></svg>',
   prog:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
   trend:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
   hist:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'
 };
 
@@ -461,8 +451,45 @@ function setsStr(sets){
   return out.map(g=>(g.w? fmt(g.w)+" kg × " : "BW × ")+g.r.join(", ")).join(" · ");
 }
 function musclesLine(ex){ const m=(ex.pri||[]).map(k=>MUSCLE[k]); return m.join(", "); }
-function normProgram(p){ p.items.forEach(it=>{ it.exId=canon(it.exId); }); return p; }
-function normSession(s){ (s.entries||[]).forEach(e=>{ e.exId=canon(e.exId); }); return s; }
+function normProgram(p){
+  // Programs from before multi-day support had one list of exercises; it becomes the program's only day
+  if(!p.days){ p.days=[{id:"d-"+p.id, name:"Workout A", items:p.items||[]}]; delete p.items; }
+  p.days.forEach(d=>d.items.forEach(it=>{ it.exId=canon(it.exId); }));
+  return p;
+}
+const findDay = (p,did) => p && p.days.find(d=>d.id===did);
+const curDay = () => UI.sub && UI.sub.type==="editDay" ? findDay(S.programs.find(x=>x.id===UI.sub.id), UI.sub.did) : null;
+const sessTitle = s => s.dayName && s.dayName!==s.programName ? s.dayName : s.programName;
+const sessSub = s => s.dayName && s.dayName!==s.programName ? s.programName : "";
+function nextDay(p){
+  const last = finishedSessions().filter(s=>s.programId===p.id && s.dayId).pop();
+  if(!last) return p.days[0];
+  const i = p.days.findIndex(d=>d.id===last.dayId);
+  return p.days[(i+1)%p.days.length] || p.days[0];
+}
+
+/* ---------- program templates ---------- */
+const TEMPLATES = [
+  ["Upper / Lower", "4 days: two upper-body and two lower-body workouts", [
+    ["Upper A","bench-press:4:6:8,barbell-row:4:6:8,ohp:3:8:10,lat-pulldown:3:8:12,lateral-raise:3:12:15,triceps-pushdown:3:10:12"],
+    ["Lower A","back-squat:4:5:8,rdl:3:8:10,leg-press:3:10:12,lying-leg-curl:3:10:12,standing-calf-raise:4:10:15,hanging-leg-raise:3:10:15"],
+    ["Upper B","incline-db-press:4:8:10,pull-up:4:6:10,db-shoulder-press:3:8:12,seated-cable-row:3:10:12,ez-curl:3:10:12,overhead-cable-ext:3:10:12"],
+    ["Lower B","deadlift:3:4:6,bulgarian-split-squat:3:8:10,hip-thrust:3:8:12,leg-extension:3:12:15,seated-leg-curl:3:10:12,seated-calf-raise:4:12:15"]]],
+  ["Push / Pull / Legs", "3 days: chest, shoulders and triceps; back and biceps; legs", [
+    ["Push","bench-press:4:6:8,incline-db-press:3:8:10,ohp:3:8:10,lateral-raise:3:12:15,cable-crossover:3:12:15,rope-pushdown:3:10:12"],
+    ["Pull","deadlift:3:4:6,pull-up:3:6:10,barbell-row:3:8:10,face-pull:3:12:15,hammer-curl:3:10:12,db-curl:3:10:12"],
+    ["Legs","back-squat:4:5:8,rdl:3:8:10,leg-press:3:10:12,leg-extension:3:12:15,lying-leg-curl:3:10:12,standing-calf-raise:4:10:15"]]],
+  ["Full body", "2 alternating full-body workouts, 2–3 times a week", [
+    ["Full body A","back-squat:3:5:8,bench-press:3:6:8,barbell-row:3:8:10,lateral-raise:3:12:15,plank:3:30:60"],
+    ["Full body B","deadlift:3:4:6,ohp:3:6:8,pull-up:3:6:10,bulgarian-split-squat:3:8:10,hanging-leg-raise:3:10:15"]]],
+  ["Empty program", "Start from one empty workout day and add your own exercises", [["Workout A",""]]]
+];
+function programFromTemplate(i){
+  const [name,,days] = TEMPLATES[i];
+  return {id:uid("p"), name: i===TEMPLATES.length-1 ? "My program" : name, days: days.map(([dn,list])=>({id:uid("d"), name:dn,
+    items: list ? list.split(",").map(x=>{ const [k,sets,a,b]=x.split(":"); return {id:uid("i"), exId:"e-"+k, sets:+sets, rMin:+a, rMax:+b}; }) : []}))};
+}
+function normSession(s){ (s.entries||[]).forEach(e=>{ e.exId=canon(e.exId); }); if(s.programId && !s.dayId) s.dayId="d-"+s.programId; return s; }
 
 /* ---------- storage ---------- */
 let DB=null, metaRef=null, sessCol=null;
@@ -601,11 +628,11 @@ function suggestion(exId, target){
 }
 
 /* ---------- mutations ---------- */
-function startWorkout(programId){
+function startWorkout(programId, dayId){
   const act = activeSession(); if(act){ go("train",{type:"workout"}); return; }
-  const p = S.programs.find(x=>x.id===programId);
-  const s = {id:uid("s"), programId:p?p.id:null, programName:p?p.name:"Free workout", date:Date.now(), finished:false, updatedAt:Date.now(),
-    entries:(p?p.items:[]).map(it=>({exId:it.exId, target:{sets:it.sets,rMin:it.rMin,rMax:it.rMax}, sets:Array.from({length:it.sets||3},()=>({w:null,r:null,done:false}))}))};
+  const p = S.programs.find(x=>x.id===programId), d = findDay(p, dayId) || (p && p.days[0]);
+  const s = {id:uid("s"), programId:p?p.id:null, dayId:d?d.id:null, programName:p?p.name:"Free workout", dayName:d?d.name:"", date:Date.now(), finished:false, updatedAt:Date.now(),
+    entries:(d?d.items:[]).map(it=>({exId:it.exId, target:{sets:it.sets,rMin:it.rMin,rMax:it.rMax}, sets:Array.from({length:it.sets||3},()=>({w:null,r:null,done:false}))}))};
   S.sessions[s.id]=s; saveSession(s.id,0);
   go("train",{type:"workout"});
 }
@@ -621,7 +648,7 @@ function placeholderFor(entry, i){
 /* ---------- example data ---------- */
 function loadExamples(){
   const items=[["e-bench-press",3,6,10,60],["e-back-squat",3,5,8,80],["e-barbell-row",3,8,12,50],["e-ohp",3,8,10,35],["e-pull-up",3,5,10,0]];
-  const p={id:uid("p"),name:"Example: Full body",example:true,items:items.map(([exId,sets,rMin,rMax])=>({id:uid("i"),exId,sets,rMin,rMax}))};
+  const p={id:uid("p"),name:"Example program",example:true,days:[{id:uid("d"),name:"Full body",items:items.map(([exId,sets,rMin,rMax])=>({id:uid("i"),exId,sets,rMin,rMax}))}]};
   S.programs.push(p); saveMeta();
   const stateMap = items.map(([exId,sets,rMin,rMax,w])=>({exId,sets,rMin,rMax,w,reps:Array(sets).fill(rMin)}));
   const n=12, now=Date.now();
@@ -634,7 +661,7 @@ function loadExamples(){
       else { const step = ((k+mi)%3===2)?1:2; for(let j=0;j<step;j++){ let idx=0; m.reps.forEach((r,i)=>{ if(r<m.reps[idx]) idx=i; }); if(m.reps[idx]<m.rMax) m.reps[idx]++; } }
       return {exId:m.exId,target:{sets:m.sets,rMin:m.rMin,rMax:m.rMax},sets};
     });
-    const s={id:uid("s"),programId:p.id,programName:p.name,date,finished:true,finishedAt:date+3600e3,updatedAt:Date.now()+k,example:true,entries};
+    const s={id:uid("s"),programId:p.id,dayId:p.days[0].id,programName:p.name,dayName:p.days[0].name,date,finished:true,finishedAt:date+3600e3,updatedAt:Date.now()+k,example:true,entries};
     S.sessions[s.id]=s; saveSession(s.id, 50+k*120);
   }
   render(); toast("Example data added");
@@ -659,6 +686,8 @@ function render(){
   const sub=UI.sub;
   if(sub && sub.type==="workout"){ [top,body]=vWorkout(act); }
   else if(sub && sub.type==="editProgram"){ [top,body]=vEditProgram(sub.id); }
+  else if(sub && sub.type==="editDay"){ [top,body]=vEditDay(sub.id, sub.did); }
+  else if(sub && sub.type==="newProgram"){ [top,body]=vNewProgram(); }
   else if(sub && sub.type==="exercise"){ [top,body]=vExercise(sub.exId); }
   else {
     top = '<h1 class="brand">Lift<b>book</b></h1><span class="sp"></span>' + (mode==="local"?'<span class="store">Saved on this device only</span>':'');
@@ -678,17 +707,21 @@ function vTrain(act){
   let out="";
   if(act){
     const done = act.entries.reduce((n,e)=>n+e.sets.filter(s=>s.r>0).length,0);
-    out += `<div class="live"><div class="main"><div class="k">Workout in progress</div><div class="n">${h(act.programName)}</div><div class="num" style="font-size:14px;opacity:.9">${done} ${done===1?"set":"sets"} logged · started ${new Date(act.date).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}</div></div><button class="btn" data-a="resume">Resume</button></div>`;
+    out += `<div class="live"><div class="main"><div class="k">Workout in progress</div><div class="n">${h(sessTitle(act))}</div><div class="num" style="font-size:14px;opacity:.9">${done} ${done===1?"set":"sets"} logged · started ${new Date(act.date).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}</div></div><button class="btn" data-a="resume">Resume</button></div>`;
   }
   if(!S.programs.length){
     out += `<div class="card empty"><h3>Start with your first program</h3><p>Pick exercises and set the sets and reps for each. Then log weight and reps as you train, and the Progress tab shows how you're improving.</p><div class="btns" style="justify-content:center"><button class="btn pri" data-a="newProgram">Create a program</button><button class="btn" data-a="loadEx">Try with example data</button></div></div>`;
     return out;
   }
   const fin = finishedSessions();
-  out += `<section class="sec"><div class="sec-h"><h2>Start a workout</h2></div><div class="list">` + S.programs.map(p=>{
-    const last = fin.filter(s=>s.programId===p.id).pop();
-    return `<div class="row"><div class="main"><div class="name">${h(p.name)}</div><div class="sub">${p.items.length} ${p.items.length===1?"exercise":"exercises"}${last?" · last done "+dShort(last.date):" · not done yet"}</div></div><button class="btn ${act?"":"pri"} sm" data-a="start" data-v="${p.id}" ${act?"disabled":""}>Start</button></div>`;
-  }).join("") + `<div class="row"><div class="main"><div class="name">Free workout</div><div class="sub">Add exercises as you go</div></div><button class="btn sm" data-a="start" data-v="" ${act?"disabled":""}>Start</button></div></div></section>`;
+  out += S.programs.map(p=>{
+    const nx = nextDay(p);
+    return `<section class="sec"><div class="sec-h"><h2>${h(p.name)}</h2><button class="btn ghost sm" data-a="editProgram" data-v="${p.id}">Edit</button></div><div class="list">` + p.days.map(d=>{
+      const last = fin.filter(s=>s.programId===p.id && s.dayId===d.id).pop();
+      const isNext = p.days.length>1 && d===nx;
+      return `<div class="row"><div class="main"><div class="name">${h(d.name)} ${isNext?'<span class="chip acc">Next</span>':""}</div><div class="sub">${d.items.length} ${d.items.length===1?"exercise":"exercises"}${last?" · last done "+dShort(last.date):" · not done yet"}</div></div><button class="btn ${act||!isNext&&p.days.length>1?"":"pri"} sm" data-a="start" data-v="${p.id}" data-d="${d.id}" ${act||!d.items.length?"disabled":""}>Start</button></div>`;
+    }).join("") + `</div></section>`;
+  }).join("") + `<section class="sec"><div class="list"><div class="row"><div class="main"><div class="name">Free workout</div><div class="sub">Add exercises as you go</div></div><button class="btn sm" data-a="start" data-v="" ${act?"disabled":""}>Start</button></div></div></section>`;
   const rows = loggedExercises().map(id=>({id, c:compare(id,4)})).map(x=>Object.assign(x,{hl:headline(x.c)})).filter(x=>x.hl).sort((a,b)=>(b.hl.dir==="up")-(a.hl.dir==="up")||b.hl.val-a.hl.val).slice(0,4);
   if(rows.length){
     out += `<section class="sec"><div class="sec-h"><h2>Last 4 weeks</h2><button class="btn ghost sm" data-a="tab" data-v="progress">All exercises</button></div><div class="list">`+
@@ -699,8 +732,8 @@ function vTrain(act){
 
 function vWorkout(s){
   const mins = Math.max(0,Math.round((Date.now()-s.date)/60000));
-  const top = `<h1 class="ttl">${h(s.programName)}</h1><span class="sp"></span><span class="store num" id="elapsed">${mins} min</span>`;
-  let b = `<div class="wk-meta">${dLong(s.date)}</div>`;
+  const top = `<h1 class="ttl">${h(sessTitle(s))}</h1><span class="sp"></span><span class="store num" id="elapsed">${mins} min</span>`;
+  let b = `<div class="wk-meta">${sessSub(s)?h(sessSub(s))+" · ":""}${dLong(s.date)}</div>`;
   s.entries.forEach((e,ei)=>{
     const t=e.target, sg=suggestion(e.exId,t), ex=exById(e.exId);
     let meta = "";
@@ -730,25 +763,45 @@ function vWorkout(s){
 
 function vPrograms(){
   let out = `<section class="sec"><div class="sec-h"><h2>Programs</h2></div>`;
-  if(!S.programs.length) out += `<div class="card empty"><h3>No programs yet</h3><p>A program is a list of exercises, each with a number of sets and a rep range, for example 3 × 8–12.</p><button class="btn pri" data-a="newProgram">Create a program</button></div>`;
-  else out += `<div class="list">`+S.programs.map(p=>`<button class="row" data-a="editProgram" data-v="${p.id}"><div class="main"><div class="name">${h(p.name)}</div><div class="sub">${p.items.length?h(p.items.map(i=>exName(i.exId)).join(", ")):"No exercises"}</div></div><span class="chev">›</span></button>`).join("")+`</div><button class="btn pri" data-a="newProgram">+ New program</button>`;
+  if(!S.programs.length) out += `<div class="card empty"><h3>No programs yet</h3><p>A program holds one or more workout days, for example an upper/lower split with two upper-body and two lower-body days. Each day lists its exercises with sets and a rep range.</p><button class="btn pri" data-a="newProgram">Create a program</button></div>`;
+  else out += `<div class="list">`+S.programs.map(p=>`<button class="row" data-a="editProgram" data-v="${p.id}"><div class="main"><div class="name">${h(p.name)}</div><div class="sub">${p.days.length} ${p.days.length===1?"workout":"workouts"}: ${h(p.days.map(d=>d.name).join(", "))}</div></div><span class="chev">›</span></button>`).join("")+`</div><button class="btn pri" data-a="newProgram">+ New program</button>`;
   return out + `</section>`;
+}
+
+function vNewProgram(){
+  const top = `<button class="back" data-a="tab" data-v="programs">‹ Programs</button><span class="sp"></span>`;
+  let b = `<section class="sec"><h2>New program</h2><p class="store" style="margin:0">Start from a template and change anything you like afterwards.</p><div class="list">`;
+  b += TEMPLATES.map(([name,desc,days],i)=>`<button class="row" data-a="useTemplate" data-v="${i}"><div class="main"><div class="name">${h(name)}</div><div class="sub">${h(desc)}${days.length>1?"<br>"+h(days.map(d=>d[0]).join(" · ")):""}</div></div><span class="chev">›</span></button>`).join("");
+  return [top, b+`</div></section>`];
 }
 
 function vEditProgram(id){
   const p = S.programs.find(x=>x.id===id);
   if(!p){ UI.sub=null; return ["",vPrograms()]; }
   const top = `<button class="back" data-a="tab" data-v="programs">‹ Programs</button><span class="sp"></span>`;
-  let b = `<div class="field"><label for="pname">Program name</label><input id="pname" data-in="pname" value="${h(p.name)}" placeholder="e.g. Upper body A"></div>`;
-  b += `<section class="sec"><div class="sec-h"><h2>Exercises</h2><span class="store">${p.items.length}</span></div>`;
-  if(p.items.length){
-    b += `<div class="list">` + p.items.map((it,i)=>`<div class="pi"><div class="pi-t"><button class="name namebtn" data-a="info" data-v="${h(it.exId)}">${h(exName(it.exId))}</button><button class="ico" data-a="mv" data-v="${i}" data-d="-1" ${i===0?"disabled":""} aria-label="Move up">${I.up}</button><button class="ico" data-a="mv" data-v="${i}" data-d="1" ${i===p.items.length-1?"disabled":""} aria-label="Move down">${I.down}</button><button class="ico" data-a="rmItem" data-v="${i}" aria-label="Remove exercise">${I.x}</button></div>
+  let b = `<div class="field"><label for="pname">Program name</label><input id="pname" data-in="pname" value="${h(p.name)}" placeholder="e.g. Upper / Lower"></div>`;
+  b += `<section class="sec"><div class="sec-h"><h2>Workouts in this program</h2><span class="store">${p.days.length}</span></div><div class="list">`;
+  b += p.days.map((d,i)=>`<div class="row"><button class="main namebtn" style="text-decoration:none" data-a="editDay" data-v="${d.id}"><div class="name">${h(d.name)}</div><div class="sub">${d.items.length?h(d.items.map(it=>exName(it.exId)).join(", ")):"No exercises yet"}</div></button><button class="ico" data-a="mvDay" data-v="${i}" data-d="-1" ${i===0?"disabled":""} aria-label="Move up">${I.up}</button><button class="ico" data-a="mvDay" data-v="${i}" data-d="1" ${i===p.days.length-1?"disabled":""} aria-label="Move down">${I.down}</button></div>`).join("");
+  b += `</div><button class="btn pri" data-a="addDay">+ Add workout day</button><p class="store" style="margin:0">Workouts are done in this order. The Train tab marks the next one after the workout you did last.</p></section>`;
+  if(UI.confirm==="delProgram") b += `<div class="confirm"><p>Delete the program "${h(p.name)}" and all its workout days? Workouts you've done stay in History.</p><div class="btns"><button class="btn danger fill" data-a="delProgram">Delete program</button><button class="btn" data-a="cancel">Cancel</button></div></div>`;
+  else b += `<div class="btns"><button class="btn danger" data-a="askDelProgram">Delete program</button></div>`;
+  return [top,b];
+}
+
+function vEditDay(pid, did){
+  const p = S.programs.find(x=>x.id===pid), d = findDay(p, did);
+  if(!d){ UI.sub = p?{type:"editProgram",id:pid}:null; return p?vEditProgram(pid):["",vPrograms()]; }
+  const top = `<button class="back" data-a="editProgram" data-v="${p.id}">‹ ${h(p.name)}</button><span class="sp"></span>`;
+  let b = `<div class="field"><label for="dname">Workout name</label><input id="dname" data-in="dname" value="${h(d.name)}" placeholder="e.g. Upper A"></div>`;
+  b += `<section class="sec"><div class="sec-h"><h2>Exercises</h2><span class="store">${d.items.length}</span></div>`;
+  if(d.items.length){
+    b += `<div class="list">` + d.items.map((it,i)=>`<div class="pi"><div class="pi-t"><button class="name namebtn" data-a="info" data-v="${h(it.exId)}">${h(exName(it.exId))}</button><button class="ico" data-a="mv" data-v="${i}" data-d="-1" ${i===0?"disabled":""} aria-label="Move up">${I.up}</button><button class="ico" data-a="mv" data-v="${i}" data-d="1" ${i===d.items.length-1?"disabled":""} aria-label="Move down">${I.down}</button><button class="ico" data-a="rmItem" data-v="${i}" aria-label="Remove exercise">${I.x}</button></div>
       <div class="pi-c"><div class="step"><span class="lbl">Sets</span><button class="ico" data-a="sets" data-v="${i}" data-d="-1" aria-label="Fewer sets">−</button><output class="num">${it.sets}</output><button class="ico" data-a="sets" data-v="${i}" data-d="1" aria-label="More sets">+</button></div>
       <div class="step"><span class="lbl">Reps</span><input id="rmin-${it.id}" class="num" inputmode="numeric" data-in="rmin" data-v="${i}" value="${it.rMin||""}" aria-label="Minimum reps"><span>–</span><input id="rmax-${it.id}" class="num" inputmode="numeric" data-in="rmax" data-v="${i}" value="${it.rMax||""}" aria-label="Maximum reps"></div></div></div>`).join("") + `</div>`;
-  } else b += `<div class="card" style="color:var(--muted)">Add exercises to the program. The rep range (e.g. 8–12) drives progression: once every set reaches the top of the range, the app suggests adding weight.</div>`;
+  } else b += `<div class="card" style="color:var(--muted)">Add exercises to this workout. The rep range (e.g. 8–12) drives progression: once every set reaches the top of the range, the app suggests adding weight.</div>`;
   b += `<button class="btn pri" data-a="pick" data-v="program">+ Add exercise</button></section>`;
-  if(UI.confirm==="delProgram") b += `<div class="confirm"><p>Delete the program "${h(p.name)}"? Workouts you've done stay in History.</p><div class="btns"><button class="btn danger fill" data-a="delProgram">Delete program</button><button class="btn" data-a="cancel">Cancel</button></div></div>`;
-  else b += `<div class="btns"><button class="btn" data-a="start" data-v="${p.id}" ${activeSession()||!p.items.length?"disabled":""}>Start this workout</button><button class="btn danger" data-a="askDelProgram">Delete program</button></div>`;
+  if(UI.confirm==="delDay") b += `<div class="confirm"><p>Delete the workout "${h(d.name)}" from ${h(p.name)}? Workouts you've done stay in History.</p><div class="btns"><button class="btn danger fill" data-a="delDay">Delete workout</button><button class="btn" data-a="cancel">Cancel</button></div></div>`;
+  else b += `<div class="btns"><button class="btn" data-a="start" data-v="${p.id}" data-d="${d.id}" ${activeSession()||!d.items.length?"disabled":""}>Start this workout</button><button class="btn danger" data-a="askDelDay" ${p.days.length<2?'disabled title="A program needs at least one workout"':""}>Delete workout</button></div>`;
   return [top,b];
 }
 
@@ -865,12 +918,10 @@ function vHistory(){
   out += `<div class="list">` + list.map(s=>{
     const open = UI.openHist[s.id];
     const n = s.entries.reduce((a,e)=>a+e.sets.filter(x=>x.r>0).length,0);
-    let r = `<div><button class="row" data-a="hist" data-v="${s.id}" aria-expanded="${!!open}"><div class="main"><div class="name">${h(s.programName)}</div><div class="sub num">${dLong(s.date)} · ${s.entries.length} exercises · ${n} sets</div></div><span class="chev">${open?"−":"+"}</span></button>`;
-    if(open){
-      r += `<div class="hs-sets">` + s.entries.map(e=>`<div><b>${h(exName(e.exId))}</b> <span class="num">${h(setsStr(e.sets.filter(x=>x.r>0).map(x=>({w:x.w||0,r:x.r}))))}</span></div>`).join("");
-      r += UI.confirm==="delS"+s.id ? `<div class="btns" style="margin-top:8px"><button class="btn danger fill sm" data-a="delSession" data-v="${s.id}">Delete workout</button><button class="btn sm" data-a="cancel">Cancel</button></div>` : `<div><button class="btn ghost sm" style="padding:0;color:var(--bad)" data-a="askDelS" data-v="${s.id}">Delete workout</button></div>`;
-      r += `</div>`;
-    }
+    const sub = sessSub(s);
+    let r = `<div><div class="row"><button class="main namebtn" style="text-decoration:none" data-a="hist" data-v="${s.id}" aria-expanded="${!!open}"><div class="name">${h(sessTitle(s))}</div><div class="sub num">${sub?h(sub)+" · ":""}${dLong(s.date)} · ${n} ${n===1?"set":"sets"}</div></button><button class="ico" data-a="hist" data-v="${s.id}" aria-label="${open?"Hide":"Show"} sets">${open?"−":"+"}</button><button class="ico" data-a="askDelS" data-v="${s.id}" aria-label="Delete workout" style="color:var(--bad)">${I.trash}</button></div>`;
+    if(UI.confirm==="delS"+s.id) r += `<div class="confirm" style="margin:0 14px 12px"><p>Delete ${h(sessTitle(s))} from ${dShort(s.date)}? Its sets are removed from your progress too.</p><div class="btns"><button class="btn danger fill sm" data-a="delSession" data-v="${s.id}">Delete workout</button><button class="btn sm" data-a="cancel">Cancel</button></div></div>`;
+    if(open) r += `<div class="hs-sets">` + s.entries.map(e=>`<div><b>${h(exName(e.exId))}</b> <span class="num">${h(setsStr(e.sets.filter(x=>x.r>0).map(x=>({w:x.w||0,r:x.r}))))}</span></div>`).join("") + `</div>`;
     return r+`</div>`;
   }).join("") + `</div></section>`;
   return out;
@@ -910,8 +961,8 @@ function pickEx(exId){
   const target = UI.picker.target;
   UI.picker=null;
   if(target==="program"){
-    const p=S.programs.find(x=>UI.sub && x.id===UI.sub.id); if(!p) return render();
-    p.items.push({id:uid("i"),exId,sets:3,rMin:8,rMax:12}); saveMeta();
+    const d=curDay(); if(!d) return render();
+    d.items.push({id:uid("i"),exId,sets:3,rMin:8,rMax:12}); saveMeta();
   } else {
     const s=activeSession(); if(!s) return render();
     s.entries.push({exId,target:null,sets:Array.from({length:3},()=>({w:null,r:null,done:false}))}); saveSession(s.id,0);
@@ -926,13 +977,20 @@ document.addEventListener("click", ev=>{
   const a=t.dataset.a, v=t.dataset.v;
   if(a==="closePick" && t.classList.contains("scrim") && ev.target!==t) return;
   const s = activeSession();
-  const prog = UI.sub && UI.sub.type==="editProgram" ? S.programs.find(x=>x.id===UI.sub.id) : null;
+  const prog = curDay();
+  const prg = UI.sub && (UI.sub.type==="editProgram"||UI.sub.type==="editDay") ? S.programs.find(x=>x.id===UI.sub.id) : null;
   switch(a){
     case "tab": go(v); break;
     case "resume": go("train",{type:"workout"}); break;
-    case "start": startWorkout(v||null); break;
-    case "newProgram": { const p={id:uid("p"),name:"Program "+(S.programs.length+1),items:[]}; S.programs.push(p); saveMeta(); go("programs",{type:"editProgram",id:p.id}); setTimeout(()=>{const i=$("#pname"); if(i){i.focus(); i.select();}},30); break; }
+    case "start": startWorkout(v||null, t.dataset.d||null); break;
+    case "newProgram": go("programs",{type:"newProgram"}); break;
+    case "useTemplate": { const p=programFromTemplate(+v); S.programs.push(p); saveMeta(); go("programs",{type:"editProgram",id:p.id}); toast("Program created"); break; }
     case "editProgram": go("programs",{type:"editProgram",id:v}); break;
+    case "editDay": go("programs",{type:"editDay",id:UI.sub.id,did:v}); break;
+    case "addDay": if(prg){ const d={id:uid("d"),name:"Workout "+String.fromCharCode(65+prg.days.length%26),items:[]}; prg.days.push(d); saveMeta(); go("programs",{type:"editDay",id:prg.id,did:d.id}); } break;
+    case "mvDay": if(prg){ const i=+v, j=i+(+t.dataset.d); if(j>=0&&j<prg.days.length){ [prg.days[i],prg.days[j]]=[prg.days[j],prg.days[i]]; saveMeta(); render(); } } break;
+    case "askDelDay": UI.confirm="delDay"; render(); break;
+    case "delDay": if(prg && prg.days.length>1){ prg.days=prg.days.filter(d=>d.id!==UI.sub.did); saveMeta(); go("programs",{type:"editProgram",id:prg.id}); toast("Workout deleted from program"); } break;
     case "openEx": UI.metric=null; go("progress",{type:"exercise",exId:v}); break;
     case "loadEx": loadExamples(); break;
     case "clearEx": clearExamples(); break;
@@ -952,7 +1010,7 @@ document.addEventListener("click", ev=>{
     case "rmItem": if(prog){ prog.items.splice(+v,1); saveMeta(); render(); } break;
     case "sets": if(prog){ const it=prog.items[+v]; it.sets=Math.min(10,Math.max(1,it.sets+(+t.dataset.d))); saveMeta(); render(); } break;
     case "askDelProgram": UI.confirm="delProgram"; render(); break;
-    case "delProgram": if(prog){ S.programs=S.programs.filter(x=>x!==prog); saveMeta(); go("programs"); toast("Program deleted"); } break;
+    case "delProgram": if(prg){ S.programs=S.programs.filter(x=>x!==prg); saveMeta(); go("programs"); toast("Program deleted"); } break;
     // workout
     case "ck": if(s){ const e=s.entries[+t.dataset.e], st=e.sets[+t.dataset.s]; if(!st.done){ const ph=placeholderFor(e,+t.dataset.s); if(st.w==null && ph.w!=null) st.w=ph.w; if(st.r==null && ph.r!=null) st.r=ph.r; if(!(st.r>0)){ toast("Enter your reps first"); break; } st.done=true; } else st.done=false; UI.msg=null; saveSession(s.id); render(); } break;
     case "addSet": if(s){ const e=s.entries[+v]; e.sets.push({w:null,r:null,done:false}); saveSession(s.id); render(); } break;
@@ -987,13 +1045,14 @@ document.addEventListener("input", ev=>{
     saveSession(s.id, 800);
     return;
   }
-  const p = UI.sub && UI.sub.type==="editProgram" ? S.programs.find(x=>x.id===UI.sub.id) : null; if(!p) return;
+  const p = UI.sub && (UI.sub.type==="editProgram"||UI.sub.type==="editDay") ? S.programs.find(x=>x.id===UI.sub.id) : null; if(!p) return;
   if(k==="pname"){ p.name=t.value; saveMeta(); }
-  if(k==="rmin"||k==="rmax"){ const it=p.items[+t.dataset.v]; const n=parseNum(t.value); const val=n==null?null:Math.max(1,Math.round(n)); if(k==="rmin") it.rMin=val; else it.rMax=val; saveMeta(); }
+  if(k==="dname"){ const d=curDay(); if(d){ d.name=t.value; saveMeta(); } }
+  if(k==="rmin"||k==="rmax"){ const d=curDay(); if(!d) return; const it=d.items[+t.dataset.v]; const n=parseNum(t.value); const val=n==null?null:Math.max(1,Math.round(n)); if(k==="rmin") it.rMin=val; else it.rMax=val; saveMeta(); }
 });
 document.addEventListener("change", ev=>{
   const k=ev.target.dataset.in;
-  if(k==="rmin"||k==="rmax"){ const p=S.programs.find(x=>UI.sub&&x.id===UI.sub.id); if(p){ const it=p.items[+ev.target.dataset.v]; if(it.rMin&&it.rMax&&it.rMin>it.rMax){ [it.rMin,it.rMax]=[it.rMax,it.rMin]; saveMeta(); scheduleRender(); } } }
+  if(k==="rmin"||k==="rmax"){ const d=curDay(); if(d){ const it=d.items[+ev.target.dataset.v]; if(it.rMin&&it.rMax&&it.rMin>it.rMax){ [it.rMin,it.rMax]=[it.rMax,it.rMin]; saveMeta(); scheduleRender(); } } }
 });
 document.addEventListener("keydown", ev=>{ if(ev.key==="Escape" && UI.picker){ UI.picker=null; renderSheet(); } });
 setInterval(()=>{ const el=$("#elapsed"), s=activeSession(); if(el&&s) el.textContent=Math.max(0,Math.round((Date.now()-s.date)/60000))+" min"; },30000);
