@@ -17,6 +17,7 @@ A simple gym tracker for your phone. Build workout programs, log the weight and 
 - **Workout logging.** Enter weight and reps set by set. The fields are pre-filled with what you did last time, so repeating a set is one tap on ✓.
 - **Rest timer.** Marking a set done starts a rest countdown at the bottom of the screen, with a beep and vibration when it's over (where the phone allows it). Use −15s / +15s to adjust it; the app remembers your rest length.
 - **Progression hints.** When every set reached the top of the rep range last time, the app suggests adding weight (+2.5 kg, or +1 kg on light lifts). This is the classic double-progression method.
+- **Personal records.** When a set beats your best for that exercise (heaviest weight, highest estimated 1RM, or most reps at that weight or heavier), you get a 🏆 notice right away, and the saved-workout message counts the records you set.
 - **Progress per exercise.** Pick a window of 2, 4, 8 or 12 weeks. If your working weight stayed the same, you see the change in reps ("+4 reps at the same weight, 60 kg"); if it went up, you see the change in kg. Each exercise has a chart of estimated 1RM, top weight, reps or volume, plus a table of past workouts.
 - **History.** Every saved workout, newest first. Delete a workout with the bin button next to it; its sets are removed from your progress too.
 - **Backup.** Export all programs and workouts to a JSON file from the History tab, and import it again on the same or another device. Importing only adds what's missing, so it never deletes anything.
