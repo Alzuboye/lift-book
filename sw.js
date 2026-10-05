@@ -1,6 +1,6 @@
 // Offline support: the app shell is precached; pages are fetched network-first
 // so updates arrive when online, and everything else is served from cache first.
-const CACHE = "liftbook-v6";
+const CACHE = "liftbook-v7";
 const SHELL = [
   "./",
   "index.html",

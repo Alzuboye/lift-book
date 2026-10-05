@@ -107,6 +107,7 @@ button.row:first-child{border-top:0}
 .ex-t .name{flex:1;font-family:var(--display);font-size:21px;font-weight:700;line-height:1.15;min-width:0;overflow-wrap:anywhere}
 .ex-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .last{font-size:13px;color:var(--muted)}
+.pr-line{font-size:13px;font-weight:600;color:var(--accent)}
 .sets{display:grid;grid-template-columns:32px 1fr 1fr 48px;gap:6px 8px;padding:4px 14px 12px;align-items:center}
 .sets .hd{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
 .sets .no{font-family:var(--display);font-weight:700;font-size:18px;color:var(--muted);text-align:center}
@@ -173,7 +174,7 @@ td.num,th.num{text-align:right;white-space:nowrap}
 
 /* sheet */
 .scrim{position:fixed;inset:0;background:rgb(0 0 0 / .45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
-.sheet{background:var(--bg);width:100%;max-width:560px;max-height:88%;border-radius:16px 16px 0 0;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px)}
+.sheet{background:var(--bg);width:100%;max-width:560px;height:88%;border-radius:16px 16px 0 0;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px)}
 .sheet-h{padding:14px 16px 10px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line)}
 .sheet-h .ttl-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .sheet-b{overflow-y:auto;padding:12px 16px 20px;display:flex;flex-direction:column;gap:14px}
@@ -605,6 +606,27 @@ function exHistory(exId){
   });
   return out;
 }
+// Personal records. A set is a record when it beats every earlier set of the exercise:
+// heavier than ever, a higher estimated 1RM, or more reps than ever at that weight or heavier.
+// Needs at least one earlier workout with the exercise, so a first session isn't all records.
+function prOf(set, prior){
+  if(!prior.length || !(set.r>0)) return null;
+  const w=set.w||0, e1=w*(1+set.r/30);
+  let maxW=0, maxE1=0, repsAt=0;
+  prior.forEach(p=>{ const pw=p.w||0; if(pw>maxW) maxW=pw; const pe=pw*(1+p.r/30); if(pe>maxE1) maxE1=pe; if(pw>=w && p.r>repsAt) repsAt=p.r; });
+  if(w>0 && w>maxW) return "Heaviest ever: "+fmt(w,2)+" kg";
+  if(w>0 && e1>maxE1+0.05) return "Strength record: est. 1RM "+fmt(e1,1)+" kg";
+  if(set.r>repsAt) return "Rep record: "+set.r+" reps at "+(w?fmt(w,2)+" kg":"bodyweight");
+  return null;
+}
+// Records set so far in this workout's entry, in the order the sets were logged
+function entryPRs(s, e){
+  const prior=[]; finishedSessions().forEach(x=>{ if(x.id===s.id) return; const pe=x.entries.find(y=>y.exId===e.exId); if(pe) pe.sets.forEach(st=>{ if(st.r>0) prior.push({w:st.w||0,r:st.r}); }); });
+  if(!prior.length) return [];
+  const out=[];
+  e.sets.forEach(st=>{ if(!st.done || !(st.r>0)) return; const pr=prOf(st, prior); if(pr) out.push(pr); prior.push({w:st.w||0,r:st.r}); });
+  return out;
+}
 function loggedExercises(){
   const ids=new Set(); finishedSessions().forEach(s=>s.entries.forEach(e=>{ if(e.sets.some(x=>x.r>0)) ids.add(e.exId); })); return [...ids];
 }
@@ -846,7 +868,9 @@ function vWorkout(s){
     if(t) meta += `<span class="chip">Target ${t.sets} × ${repsLabel(t.rMin,t.rMax)}</span>`;
     if(sg && sg.bump) meta += `<span class="chip acc">${I.up.replace('<svg','<svg width="14" height="14"')} Go up to ${fmt(sg.bump)} kg</span>`;
     const lastLine = sg ? `<div class="last">Last time, ${dShort(sg.last.date)}: <span class="num">${h(setsStr(sg.last.sets))}</span></div>` : `<div class="last">First time doing this exercise</div>`;
-    b += `<div class="ex"><div class="ex-h"><div class="ex-t"><button class="name namebtn" data-a="info" data-v="${h(e.exId)}" aria-label="About ${h(ex.name)}">${h(ex.name)}</button><button class="ico" data-a="exMenu" data-v="${ei}" aria-label="Remove exercise from workout">${I.x}</button></div>${meta?'<div class="ex-meta">'+meta+'</div>':""}${lastLine}</div>`;
+    const prs = entryPRs(s,e);
+    const prLine = prs.length ? `<div class="pr-line">🏆 ${h(prs[prs.length-1])}${prs.length>1?` <span style="font-weight:500">(${prs.length} records this workout)</span>`:""}</div>` : "";
+    b += `<div class="ex"><div class="ex-h"><div class="ex-t"><button class="name namebtn" data-a="info" data-v="${h(e.exId)}" aria-label="About ${h(ex.name)}">${h(ex.name)}</button><button class="ico" data-a="exMenu" data-v="${ei}" aria-label="Remove exercise from workout">${I.x}</button></div>${meta?'<div class="ex-meta">'+meta+'</div>':""}${lastLine}${prLine}</div>`;
     if(UI.confirm==="rmEx"+ei) b += `<div class="confirm" style="margin:0 14px 12px"><p>Remove ${h(ex.name)} from this workout?</p><div class="btns"><button class="btn danger fill sm" data-a="rmEx" data-v="${ei}">Remove</button><button class="btn sm" data-a="cancel">Cancel</button></div></div>`;
     b += `<div class="sets"><span class="hd" style="text-align:center">Set</span><span class="hd">kg</span><span class="hd">Reps</span><span></span>`;
     e.sets.forEach((st,si)=>{
@@ -1120,7 +1144,7 @@ document.addEventListener("click", ev=>{
     case "askDelProgram": UI.confirm="delProgram"; render(); break;
     case "delProgram": if(prg){ S.programs=S.programs.filter(x=>x!==prg); saveMeta(); go("programs"); toast("Program deleted"); } break;
     // workout
-    case "ck": if(s){ const e=s.entries[+t.dataset.e], st=e.sets[+t.dataset.s]; if(!st.done){ const ph=placeholderFor(e,+t.dataset.s); if(st.w==null && ph.w!=null) st.w=ph.w; if(st.r==null && ph.r!=null) st.r=ph.r; if(!(st.r>0)){ toast("Enter your reps first"); break; } st.done=true; restStart(); } else st.done=false; UI.msg=null; saveSession(s.id); render(); } break;
+    case "ck": if(s){ const e=s.entries[+t.dataset.e], st=e.sets[+t.dataset.s]; if(!st.done){ const ph=placeholderFor(e,+t.dataset.s); if(st.w==null && ph.w!=null) st.w=ph.w; if(st.r==null && ph.r!=null) st.r=ph.r; if(!(st.r>0)){ toast("Enter your reps first"); break; } const before=entryPRs(s,e).length; st.done=true; restStart(); const prs=entryPRs(s,e); if(prs.length>before) setTimeout(()=>toast("🏆 New record! "+prs[prs.length-1]),0); } else st.done=false; UI.msg=null; saveSession(s.id); render(); } break;
     case "addSet": if(s){ const e=s.entries[+v]; e.sets.push({w:null,r:null,done:false}); saveSession(s.id); render(); } break;
     case "rmSet": if(s){ const e=s.entries[+v]; if(e.sets.length>1){ e.sets.pop(); saveSession(s.id); render(); } } break;
     case "exMenu": UI.confirm="rmEx"+v; render(); break;
@@ -1131,9 +1155,10 @@ document.addEventListener("click", ev=>{
       s.entries.forEach(e=>{ e.sets=e.sets.filter(x=>x.r>0); });
       const kept = s.entries.filter(e=>e.sets.length);
       if(!kept.length){ s.entries.forEach(e=>{ if(!e.sets.length) e.sets=[{w:null,r:null,done:false}]; }); UI.msg="Log at least one set (reps) before saving, or discard the workout."; render(); break; }
+      const nPR=kept.reduce((a,e)=>a+entryPRs(s,e).length,0);
       restStop(); s.entries=kept; s.finished=true; s.finishedAt=Date.now(); saveSession(s.id,0);
       const n=kept.reduce((a,e)=>a+e.sets.length,0);
-      go("train"); toast("Workout saved: "+n+(n===1?" set":" sets"));
+      go("train"); toast("Workout saved: "+n+(n===1?" set":" sets")+(nPR?" · 🏆 "+nPR+(nPR===1?" new record":" new records"):""));
     } break;
     // history
     case "restAdj": restAdjust(+v); break;
